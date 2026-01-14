@@ -1,0 +1,22 @@
+{
+    "name": "osw3/symfony-coming-soon",
+    "autoload": {
+        "psr-4": {
+            "OSW3\\ComingSoon\\": "src/"
+        }
+    },
+    "authors": [
+        {
+			"name": "Project Contributors",
+			"homepage": "https://github.com/osw3/symfony-coming-soon/graphs/contributors"
+        }
+    ],
+    "require": {
+        "doctrine/doctrine-bundle": "^3.2",
+        "doctrine/doctrine-migrations-bundle": "^4.0",
+        "doctrine/orm": "^3.6",
+        "symfony/filesystem": "*",
+        "symfony/security-csrf": "*",
+        "symfony/twig-bundle": "*"
+    }
+}

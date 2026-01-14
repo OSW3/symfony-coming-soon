@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="{{ coming_soon__lang() }}">
+<head>
+    <meta charset="{{ coming_soon__charset() }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ coming_soon__name() }}</title>
+    {% if coming_soon__has_description() %}
+    <meta name="description" content="{{ coming_soon__description() }}">
+    {% endif %}
+
+    {% if coming_soon__has_favicon() %}
+    <link rel="shortcut icon" href="{{ coming_soon__favicon() }}" type="image/x-icon">
+    {% endif %}
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,900">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./bundles/comingsoon/style.css">
+</head>
+<body>
+    <div class="wrapper">
+
+        <main>
+
+            <h1>
+                <img src="{{ coming_soon__banner() }}" alt="{{ coming_soon__name() }}" class="brand">
+                <span hidden>{{ coming_soon__name() }}</span>
+            </h1>
+
+            {% if coming_soon__content() is not null %}
+            <p>{{ coming_soon__content() | raw }}</p>
+            {% endif %}
+
+            {% if coming_soon__storage_type() != 'none' %}
+            <form method="post" id="coming-soon-form">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('coming_soon_form') }}">
+
+                <label for="email" hidden>{{ coming_soon__email() }}</label>
+                <input 
+                    type="email" 
+                    name="email" 
+                    id="email" 
+                    placeholder="{{ coming_soon__email() }}" 
+                    required
+                    {{ coming_soon__autofocus() ? 'autofocus' : '' }} 
+                >
+
+                <button type="submit" id="submit-btn">{{ coming_soon__submit() }}</button>
+            </form>
+            <p id="form-message" hidden></p>
+            {% endif %}
+
+
+            {% if coming_soon__links() is not empty %}   
+            <nav>
+                <ul>
+                {% for link in coming_soon__links() %}
+                    <li><a href="{{ link.url }}" target="_blank" class="fa-brands fa-{{ link.icon }}"><span class="label">{{ link.label }}</span></a></li>
+                {% endfor %}
+                </ul>
+            </nav>
+            {% endif %}
+
+        </main>
+        <footer>
+            <span class="copyright">&copy; {{ year }} {{ coming_soon__name() }}.</span>
+        </footer>
+        
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('coming-soon-form');
+        const button = document.getElementById('submit-btn');
+        const messageEl = document.getElementById('form-message');
+
+        if (!form || !button || !messageEl) return;
+
+        if (localStorage.getItem('coming_soon_subscribed') !== null) {
+            if (form) {
+                form.remove();
+            }
+
+            messageEl.hidden = false;
+            messageEl.textContent = `{{ coming_soon__already_subscribed() }}`;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            button.disabled = true;
+            const originalText = button.textContent;
+            button.textContent = `{{ coming_soon__sending() }}`;
+
+            try {
+                const response = await fetch(form.action || window.location.href, {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    body: new FormData(form)
+                });
+
+                const data = await response.json();
+
+                messageEl.hidden = false;
+                messageEl.textContent = data.message;
+
+                if (data.success) {
+                    localStorage.setItem('coming_soon_subscribed', '1');
+                    form.remove();
+                }
+            } catch (e) {
+                messageEl.hidden = false;
+                messageEl.textContent = `{{ coming_soon__error() }}`;
+            } finally {
+                button.disabled = false;
+                button.textContent = originalText;
+            }
+
+            return false;
+        });
+    });
+    </script>
+
+</body>
+</html>
