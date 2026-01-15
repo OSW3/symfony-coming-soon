@@ -2,8 +2,31 @@
 
 ## Install
 
+### Step 1: Install the bundle via Composer
+
 ```shell
 composer require osw3/symfony-coming-soon
+```
+
+### Step 2: Register the bundle
+
+If Symfony Flex is not used, register the bundle manually in `config/bundles.php`:
+
+```php
+return [
+    // ...
+    OSW3\ComingSoon\ComingSoonBundle::class => ['all' => true],
+];
+```
+
+### Step 3: Import the bundle routes
+
+Add the following to your `config/routes.yaml` file:
+
+```yaml
+_coming_soon:
+    resource: '@ComingSoonBundle/Resources/routes.yaml'
+    # prefix: /coming-soon
 ```
 
 ## Update
